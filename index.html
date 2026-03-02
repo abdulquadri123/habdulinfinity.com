@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habdul Infinity Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --black: #080808;
+    --dark: #111111;
+    --card: #181818;
+    --gold: #E8B84B;
+    --gold2: #f5d078;
+    --white: #f0ece4;
+    --gray: #888;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'Outfit', sans-serif; overflow-x: hidden; cursor: none; }
+
+  .cursor { position: fixed; width: 10px; height: 10px; background: var(--gold); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); }
+  .cursor-ring { position: fixed; width: 36px; height: 36px; border: 1.5px solid var(--gold); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: all 0.15s ease; opacity: 0.6; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 6vw;
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(232,184,75,0.1);
+    transition: padding 0.3s;
+  }
+  .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.08em; color: var(--white); text-decoration: none; }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { color: var(--gray); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta { background: var(--gold); color: var(--black); padding: 9px 22px; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; text-decoration: none; transition: background 0.2s; }
+  .nav-cta:hover { background: var(--gold2); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; background: none; border: none; }
+  .hamburger span { width: 24px; height: 2px; background: var(--white); display: block; }
+
+  /* HERO */
+  .hero { position: relative; height: 100vh; overflow: hidden; }
+  .slides { display: flex; height: 100%; transition: transform 0.8s cubic-bezier(0.77,0,0.175,1); }
+  .slide { min-width: 100%; height: 100%; position: relative; display: flex; align-items: center; }
+  .slide-bg { position: absolute; inset: 0; }
+  .slide:nth-child(1) .slide-bg { background: radial-gradient(ellipse at 70% 30%, rgba(232,184,75,0.18) 0%, transparent 60%), linear-gradient(135deg, #0d0700, #1a0e00 50%, #080808); }
+  .slide:nth-child(2) .slide-bg { background: radial-gradient(ellipse at 70% 30%, rgba(79,195,247,0.15) 0%, transparent 60%), linear-gradient(135deg, #000a14, #001830, #080808); }
+  .slide:nth-child(3) .slide-bg { background: radial-gradient(ellipse at 70% 30%, rgba(198,122,255,0.15) 0%, transparent 60%), linear-gradient(135deg, #0a0014, #1a0030, #080808); }
+  .slide:nth-child(4) .slide-bg { background: radial-gradient(ellipse at 70% 30%, rgba(76,255,145,0.12) 0%, transparent 60%), linear-gradient(135deg, #001408, #002818, #080808); }
+
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.3; animation: blobFloat 9s ease-in-out infinite alternate; }
+  .b1 { width: 550px; height: 550px; right: -80px; top: -80px; }
+  .b2 { width: 300px; height: 300px; left: 25%; bottom: 5%; animation-delay: 3s; }
+  .slide:nth-child(1) .b1 { background: var(--gold); } .slide:nth-child(1) .b2 { background: #ff6b35; }
+  .slide:nth-child(2) .b1 { background: #4fc3f7; } .slide:nth-child(2) .b2 { background: #0099ff; }
+  .slide:nth-child(3) .b1 { background: #c67aff; } .slide:nth-child(3) .b2 { background: #ff4080; }
+  .slide:nth-child(4) .b1 { background: #4cff91; } .slide:nth-child(4) .b2 { background: #00e5ff; }
+  @keyframes blobFloat { from { transform: translateY(0) scale(1); } to { transform: translateY(-30px) scale(1.08); } }
+
+  .grid-overlay { position: absolute; inset: 0; background-image: linear-gradient(rgba(232,184,75,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(232,184,75,0.03) 1px, transparent 1px); background-size: 60px 60px; }
+
+  .slide-content { position: relative; z-index: 2; padding: 0 8vw; max-width: 680px; }
+  .slide-tag { display: inline-block; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(232,184,75,0.4); padding: 5px 14px; margin-bottom: 22px; }
+  .slide-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.2rem, 7vw, 6.5rem); line-height: 0.95; letter-spacing: 0.02em; color: var(--white); }
+  .slide-title span { color: var(--gold); }
+  .slide-desc { margin-top: 18px; font-size: 0.93rem; color: #aaa; line-height: 1.75; max-width: 460px; }
+  .slide-btns { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .btn-gold { background: var(--gold); color: var(--black); padding: 13px 30px; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+  .btn-gold:hover { background: var(--gold2); }
+  .btn-outline { border: 1px solid rgba(255,255,255,0.25); color: var(--white); padding: 13px 30px; font-weight: 500; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.2s; }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+  .carousel-nav { position: absolute; bottom: 40px; left: 8vw; z-index: 10; display: flex; gap: 8px; }
+  .dot { width: 28px; height: 3px; background: rgba(255,255,255,0.2); cursor: none; transition: all 0.3s; border: none; }
+  .dot.active { background: var(--gold); width: 48px; }
+  .carousel-arrows { position: absolute; bottom: 30px; right: 8vw; z-index: 10; display: flex; gap: 10px; }
+  .arr-btn { width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: var(--white); cursor: none; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+  .arr-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .slide-counter { position: absolute; top: 50%; right: 5vw; z-index: 10; transform: translateY(-50%); writing-mode: vertical-rl; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .slide-counter .cur { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; color: var(--gold); line-height: 1; }
+  .slide-counter .sep, .slide-counter .tot { font-family: 'Bebas Neue', sans-serif; font-size: 0.8rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.25); }
+
+  /* MARQUEE */
+  .marquee-bar { background: var(--gold); padding: 12px 0; overflow: hidden; }
+  .marquee-track { display: flex; animation: marquee 22s linear infinite; white-space: nowrap; }
+  .marquee-item { font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 0.15em; color: var(--black); padding: 0 28px; display: flex; align-items: center; gap: 12px; }
+  .marquee-item::after { content: '✦'; font-size: 0.65rem; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* SECTION */
+  section { padding: 100px 8vw; }
+  .section-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .section-label::before { content: ''; width: 36px; height: 1px; background: var(--gold); }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1; letter-spacing: 0.02em; }
+  .section-title span { color: var(--gold); }
+
+  /* ABOUT */
+  .about { background: var(--dark); }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: start; margin-top: 55px; }
+  .about-card { background: var(--card); padding: 48px 44px; border-left: 3px solid var(--gold); position: relative; overflow: hidden; }
+  .about-card::before { content: 'A'; font-family: 'Bebas Neue', sans-serif; position: absolute; font-size: 20rem; line-height: 1; color: rgba(232,184,75,0.03); top: -30px; left: -20px; pointer-events: none; }
+  .about-name { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--gold); letter-spacing: 0.06em; display: block; margin-bottom: 4px; }
+  .about-role { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray); margin-bottom: 22px; display: block; }
+  .about-text { font-size: 0.92rem; color: #aaa; line-height: 1.82; }
+  .about-features { display: flex; flex-direction: column; gap: 12px; margin-top: 28px; }
+  .feature-item { display: flex; align-items: center; gap: 12px; font-size: 0.88rem; color: #999; }
+  .feature-item i { color: var(--gold); font-size: 0.8rem; }
+  .about-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .stat { text-align: center; padding: 24px 16px; background: rgba(232,184,75,0.04); border: 1px solid rgba(232,184,75,0.1); }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; color: var(--gold); display: block; }
+  .stat-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); margin-top: 4px; }
+  .quote-block { margin-top: 24px; padding: 32px; background: var(--card); border-left: 3px solid var(--gold); }
+  .quote-block blockquote { font-size: 1rem; color: #ccc; font-style: italic; line-height: 1.8; }
+  .quote-author { display: flex; align-items: center; gap: 12px; margin-top: 20px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .qa-avatar { width: 40px; height: 40px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--black); }
+  .qa-name { font-weight: 600; font-size: 0.88rem; }
+  .qa-role { font-size: 0.75rem; color: var(--gray); }
+  .about-btns { display: flex; gap: 12px; margin-top: 24px; }
+
+  /* SERVICES */
+  .services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-top: 50px; }
+  .service-card { background: var(--card); padding: 38px 30px; position: relative; overflow: hidden; transition: all 0.3s; cursor: none; border-bottom: 2px solid transparent; }
+  .service-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--gold); transition: width 0.4s; }
+  .service-card:hover::after { width: 100%; }
+  .service-card:hover { background: #1e1e1e; transform: translateY(-4px); }
+  .service-icon { width: 50px; height: 50px; background: rgba(232,184,75,0.08); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--gold); margin-bottom: 22px; }
+  .service-num { position: absolute; top: 18px; right: 22px; font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: rgba(232,184,75,0.05); line-height: 1; }
+  .service-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem; letter-spacing: 0.05em; color: var(--white); margin-bottom: 10px; }
+  .service-desc { font-size: 0.87rem; color: var(--gray); line-height: 1.72; }
+  .service-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-decoration: none; transition: gap 0.2s; }
+  .service-card:hover .service-link { gap: 14px; }
+
+  /* PORTFOLIO */
+  .portfolio { background: var(--dark); }
+  .portfolio-filter { display: flex; gap: 8px; margin: 36px 0; flex-wrap: wrap; }
+  .filter-btn { padding: 8px 18px; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; background: transparent; border: 1px solid rgba(255,255,255,0.12); color: var(--gray); cursor: none; transition: all 0.2s; font-family: 'Outfit', sans-serif; }
+  .filter-btn.active, .filter-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--black); font-weight: 700; }
+  .portfolio-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 3px; }
+  .portfolio-item { position: relative; overflow: hidden; aspect-ratio: 4/3; cursor: none; }
+  .p-bg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform 0.5s; }
+  .portfolio-item:hover .p-bg { transform: scale(1.06); }
+  .p1 { background: linear-gradient(135deg,#1a0a00,#3d1a00); }
+  .p2 { background: linear-gradient(135deg,#000a1a,#001440); }
+  .p3 { background: linear-gradient(135deg,#0a0014,#1e0030); }
+  .p4 { background: linear-gradient(135deg,#001a08,#003018); }
+  .p5 { background: linear-gradient(135deg,#1a0010,#30001c); }
+  .p6 { background: linear-gradient(135deg,#0a0a00,#1a1a00); }
+  .p-icon { font-size: 3rem; color: rgba(255,255,255,0.12); }
+  .portfolio-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.87); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; padding: 20px; text-align: center; }
+  .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+  .p-cat { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .p-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.05em; color: var(--white); }
+  .p-view { margin-top: 14px; width: 36px; height: 36px; border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; color: var(--gold); }
+
+  /* PROCESS */
+  .process-grid { display: grid; grid-template-columns: repeat(4,1fr); margin-top: 55px; }
+  .process-step { padding: 36px 26px; border-right: 1px solid rgba(255,255,255,0.05); position: relative; }
+  .process-step:last-child { border-right: none; }
+  .process-step::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 3px; background: var(--gold); transition: width 0.4s; }
+  .process-step:hover::before { width: 100%; }
+  .p-num { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; color: rgba(232,184,75,0.12); line-height: 1; margin-bottom: 18px; }
+  .p-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; color: var(--white); letter-spacing: 0.05em; margin-bottom: 10px; }
+  .p-desc { font-size: 0.87rem; color: var(--gray); line-height: 1.72; }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--dark); }
+  .testi-track { display: flex; gap: 20px; transition: transform 0.6s cubic-bezier(0.77,0,0.175,1); margin-top: 50px; overflow: hidden; }
+  .testi-card { min-width: calc(33.333% - 14px); background: var(--card); padding: 36px 32px; flex-shrink: 0; }
+  .testi-quote { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; color: var(--gold); line-height: 0.8; opacity: 0.3; display: block; margin-bottom: 18px; }
+  .testi-text { font-size: 0.9rem; color: #ccc; line-height: 1.82; font-style: italic; }
+  .testi-author { display: flex; align-items: center; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .t-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--black); flex-shrink: 0; }
+  .t-name { font-weight: 600; font-size: 0.88rem; }
+  .t-role { font-size: 0.75rem; color: var(--gray); }
+  .stars { color: var(--gold); font-size: 0.72rem; margin-bottom: 4px; }
+  .testi-controls { display: flex; gap: 10px; margin-top: 28px; }
+  .t-btn { width: 42px; height: 42px; border: 1px solid rgba(255,255,255,0.12); background: none; color: var(--white); cursor: none; font-size: 0.88rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .t-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* CTA */
+  .cta-band { background: var(--gold); padding: 70px 8vw; display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+  .cta-big { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem,4vw,3.5rem); color: var(--black); line-height: 1; letter-spacing: 0.02em; }
+  .cta-small { font-size: 0.9rem; color: rgba(0,0,0,0.55); margin-top: 8px; }
+  .cta-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-dark { background: var(--black); color: var(--white); padding: 14px 30px; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+  .btn-dark:hover { background: #1a1a1a; }
+  .btn-border-dark { border: 2px solid var(--black); color: var(--black); padding: 14px 30px; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.2s; }
+  .btn-border-dark:hover { background: var(--black); color: var(--gold); }
+
+  /* FOOTER */
+  footer { background: #050505; padding: 70px 8vw 28px; border-top: 1px solid rgba(255,255,255,0.04); }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 55px; }
+  .f-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; letter-spacing: 0.08em; }
+  .f-logo span { color: var(--gold); }
+  .f-desc { font-size: 0.87rem; color: var(--gray); line-height: 1.8; margin-top: 14px; max-width: 270px; }
+  .f-social { display: flex; gap: 8px; margin-top: 22px; flex-wrap: wrap; }
+  .soc-btn { width: 36px; height: 36px; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: var(--gray); font-size: 0.82rem; text-decoration: none; transition: all 0.2s; }
+  .soc-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .soc-btn.wa { border-color: rgba(37,211,102,0.4); color: #25D366; }
+  .soc-btn.wa:hover { background: rgba(37,211,102,0.08); }
+  .f-col h4 { font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 0.1em; color: var(--white); margin-bottom: 18px; }
+  .f-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .f-col a { font-size: 0.87rem; color: var(--gray); text-decoration: none; transition: color 0.2s; }
+  .f-col a:hover { color: var(--gold); }
+  .contact-list { display: flex; flex-direction: column; gap: 14px; }
+  .ci { display: flex; align-items: flex-start; gap: 12px; }
+  .ci-icon { color: var(--gold); font-size: 0.82rem; margin-top: 3px; flex-shrink: 0; }
+  .ci-text { font-size: 0.87rem; color: var(--gray); line-height: 1.5; word-break: break-all; }
+  .ci-text a { color: var(--gray); text-decoration: none; }
+  .ci-text a:hover { color: var(--gold); }
+  .f-divider { border: none; border-top: 1px solid rgba(255,255,255,0.04); margin: 38px 0 22px; }
+  .f-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .f-bottom p { font-size: 0.78rem; color: rgba(255,255,255,0.2); }
+  .f-bottom a { color: var(--gold); text-decoration: none; }
+
+  /* WhatsApp float */
+  .wa-float { position: fixed; bottom: 28px; right: 28px; z-index: 999; width: 54px; height: 54px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; text-decoration: none; box-shadow: 0 4px 20px rgba(37,211,102,0.35); animation: waPulse 2.5s ease-in-out infinite; cursor: none; }
+  @keyframes waPulse { 0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,0.35); } 50% { box-shadow: 0 4px 40px rgba(37,211,102,0.65); } }
+
+  /* Reveal */
+  .reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* Mobile */
+  @media(max-width:900px){
+    .nav-links,.nav-cta{display:none;}
+    .hamburger{display:flex;}
+    .services-grid,.process-grid,.portfolio-grid{grid-template-columns:1fr 1fr;}
+    .about-grid{grid-template-columns:1fr;gap:36px;}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:36px;}
+    .testi-card{min-width:88%;}
+  }
+  @media(max-width:600px){
+    section{padding:65px 5vw;}
+    .services-grid,.process-grid,.portfolio-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+    .cta-band{padding:48px 5vw;}
+    .cta-actions{flex-direction:column;}
+    .slide-counter{display:none;}
+  }
+  .mobile-menu { display:none; position:fixed; top:65px; left:0; width:100%; background:#0d0d0d; border-top:1px solid rgba(232,184,75,0.12); z-index:999; padding:24px 6vw; flex-direction:column; gap:18px; }
+  .mobile-menu.open{display:flex;}
+  .mobile-menu a{color:var(--gray);text-decoration:none;font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a class="nav-logo" href="#"><span>H</span>Abdul <span>I</span>nfinity</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#portfolio">Work</a></li>
+    <li><a href="#testimonials">Reviews</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a class="nav-cta" href="#contact">Get a Quote</a>
+  <button class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMenu()">About</a>
+  <a href="#services" onclick="closeMenu()">Services</a>
+  <a href="#portfolio" onclick="closeMenu()">Work</a>
+  <a href="#testimonials" onclick="closeMenu()">Reviews</a>
+  <a href="#contact" onclick="closeMenu()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="slides" id="slides">
+    <div class="slide">
+      <div class="slide-bg"></div>
+      <div class="blob b1"></div><div class="blob b2"></div>
+      <div class="grid-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">Creative Design Studio</div>
+        <h1 class="slide-title">Where Ideas<br>Become <span>Art</span></h1>
+        <p class="slide-desc">Habdul Infinity Agency crafts extraordinary visual identities, digital experiences, and creative solutions that elevate your brand beyond boundaries.</p>
+        <div class="slide-btns">
+          <a href="#services" class="btn-gold">Explore Services</a>
+          <a href="#portfolio" class="btn-outline">View Portfolio</a>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-bg"></div>
+      <div class="blob b1"></div><div class="blob b2"></div>
+      <div class="grid-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">Motion & Animation</div>
+        <h1 class="slide-title">Bringing <span>Motion</span><br>to Life</h1>
+        <p class="slide-desc">From 2D animation to full cinematic sequences — we create immersive animated experiences that captivate and engage your audience at every touchpoint.</p>
+        <div class="slide-btns">
+          <a href="#services" class="btn-gold">Our Services</a>
+          <a href="#contact" class="btn-outline">Start Project</a>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-bg"></div>
+      <div class="blob b1"></div><div class="blob b2"></div>
+      <div class="grid-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">App & Game Development</div>
+        <h1 class="slide-title">Build the <span>Future</span><br>Digitally</h1>
+        <p class="slide-desc">Full-cycle app and game development — from concept to launch. We engineer interactive experiences that are as powerful as they are beautiful.</p>
+        <div class="slide-btns">
+          <a href="#services" class="btn-gold">View Services</a>
+          <a href="#portfolio" class="btn-outline">See Work</a>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-bg"></div>
+      <div class="blob b1"></div><div class="blob b2"></div>
+      <div class="grid-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">Graphic Design & Illustration</div>
+        <h1 class="slide-title"><span>Infinite</span><br>Creativity</h1>
+        <p class="slide-desc">Brand identities, illustration, UI design — your creative vision realized with precision, passion, and uncompromising professional excellence.</p>
+        <div class="slide-btns">
+          <a href="#contact" class="btn-gold">Get Started</a>
+          <a href="#about" class="btn-outline">About Us</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="carousel-nav" id="dotsContainer">
+    <button class="dot active" onclick="goTo(0)"></button>
+    <button class="dot" onclick="goTo(1)"></button>
+    <button class="dot" onclick="goTo(2)"></button>
+    <button class="dot" onclick="goTo(3)"></button>
+  </div>
+  <div class="carousel-arrows">
+    <button class="arr-btn" onclick="prevSlide()"><i class="fas fa-arrow-left"></i></button>
+    <button class="arr-btn" onclick="nextSlide()"><i class="fas fa-arrow-right"></i></button>
+  </div>
+  <div class="slide-counter">
+    <span class="cur" id="curNum">01</span>
+    <span class="sep">—</span>
+    <span class="tot">04</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="marquee-track">
+    <div class="marquee-item">Graphic Design</div>
+    <div class="marquee-item">Illustration</div>
+    <div class="marquee-item">2D Animation</div>
+    <div class="marquee-item">3D Animation</div>
+    <div class="marquee-item">Game Development</div>
+    <div class="marquee-item">App Development</div>
+    <div class="marquee-item">Brand Identity</div>
+    <div class="marquee-item">UI/UX Design</div>
+    <div class="marquee-item">Motion Graphics</div>
+    <div class="marquee-item">Digital Solutions</div>
+    <div class="marquee-item">Graphic Design</div>
+    <div class="marquee-item">Illustration</div>
+    <div class="marquee-item">2D Animation</div>
+    <div class="marquee-item">3D Animation</div>
+    <div class="marquee-item">Game Development</div>
+    <div class="marquee-item">App Development</div>
+    <div class="marquee-item">Brand Identity</div>
+    <div class="marquee-item">UI/UX Design</div>
+    <div class="marquee-item">Motion Graphics</div>
+    <div class="marquee-item">Digital Solutions</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="section-label">Our Story</div>
+  <div class="section-title reveal">About <span>HAbdul</span><br>Infinity Agency</div>
+  <div class="about-grid">
+    <div class="reveal">
+      <div class="about-card">
+        <span class="about-name">Abdul</span>
+        <span class="about-role">Founder & Creative Director</span>
+        <p class="about-text">Habdul Infinity Agency is a creative powerhouse led by Abdul — a visionary designer and digital artist with a passion for transforming ideas into extraordinary visual experiences.</p>
+        <p class="about-text" style="margin-top:14px">We specialize in delivering premium graphic design, illustration, animation, game development, and app solutions for brands that refuse to blend in. Our philosophy: every pixel, every frame, every interaction should tell a compelling story.</p>
+        <div class="about-features">
+          <div class="feature-item"><i class="fas fa-check-circle"></i> Pixel-perfect design execution</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> Full-cycle creative & development services</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> Client-centered collaborative process</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> Fast turnaround with premium quality</div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="about-stats">
+        <div class="stat"><span class="stat-num">200+</span><span class="stat-label">Projects</span></div>
+        <div class="stat"><span class="stat-num">80+</span><span class="stat-label">Clients</span></div>
+        <div class="stat"><span class="stat-num">7+</span><span class="stat-label">Years</span></div>
+      </div>
+      <div class="quote-block">
+        <blockquote>"We don't just design — we build worlds. Every brand deserves a visual identity as unique and powerful as the vision behind it."</blockquote>
+        <div class="quote-author">
+          <div class="qa-avatar">A</div>
+          <div>
+            <div class="qa-name">Abdul</div>
+            <div class="qa-role">Founder, Habdul Infinity Agency</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-btns">
+        <a href="#contact" class="btn-gold">Work With Us</a>
+        <a href="#portfolio" class="btn-outline">See Our Work</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-label">What We Do</div>
+  <div class="section-title reveal">Our <span>Creative</span><br>Services</div>
+  <p style="margin-top:14px;font-size:0.93rem;color:var(--gray);line-height:1.75;max-width:460px" class="reveal">From concept to completion, we offer a full spectrum of creative and digital services designed to make your brand unforgettable.</p>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-num">01</div>
+      <div class="service-icon"><i class="fas fa-pen-nib"></i></div>
+      <div class="service-name">Graphic Design</div>
+      <p class="service-desc">Brand identities, logos, print media, social media graphics, packaging — all designed to make a lasting impression on every platform.</p>
+      <a class="service-link" href="#contact">Get Started <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">02</div>
+      <div class="service-icon"><i class="fas fa-paint-brush"></i></div>
+      <div class="service-name">Illustration</div>
+      <p class="service-desc">Custom digital illustrations, character design, concept art, and editorial artwork crafted with a distinctive and imaginative artistic voice.</p>
+      <a class="service-link" href="#contact">Get Started <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">03</div>
+      <div class="service-icon"><i class="fas fa-film"></i></div>
+      <div class="service-name">Animation</div>
+      <p class="service-desc">2D/3D animation, motion graphics, explainer videos, character animation, and cinematic visual effects — bringing stories to life on any screen.</p>
+      <a class="service-link" href="#contact">Get Started <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">04</div>
+      <div class="service-icon"><i class="fas fa-gamepad"></i></div>
+      <div class="service-name">Game Development</div>
+      <p class="service-desc">Full-cycle game design and development — from concept art and world-building to coding, testing, and cross-platform deployment.</p>
+      <a class="service-link" href="#contact">Get Started <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">05</div>
+      <div class="service-icon"><i class="fas fa-mobile-alt"></i></div>
+      <div class="service-name">App Development</div>
+      <p class="service-desc">Beautiful, functional mobile and web applications built with modern technologies, intuitive UX design, and pixel-perfect user interfaces.</p>
+      <a class="service-link" href="#contact">Get Started <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">06</div>
+      <div class="service-icon"><i class="fas fa-layer-group"></i></div>
+      <div class="service-name">Digital Solutions</div>
+      <p class="service-desc">UI/UX design, social media content, digital marketing assets, web design, and comprehensive digital strategy tailored for modern brands.</p>
+      <a class="service-link" href="#contact">Get Started <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+  <div class="section-label">Selected Work</div>
+  <div class="section-title reveal">Our <span>Portfolio</span></div>
+  <div class="portfolio-filter reveal">
+    <button class="filter-btn active" onclick="filterActive(this)">All</button>
+    <button class="filter-btn" onclick="filterActive(this)">Graphic Design</button>
+    <button class="filter-btn" onclick="filterActive(this)">Illustration</button>
+    <button class="filter-btn" onclick="filterActive(this)">Animation</button>
+    <button class="filter-btn" onclick="filterActive(this)">Game Dev</button>
+    <button class="filter-btn" onclick="filterActive(this)">Apps</button>
+  </div>
+  <div class="portfolio-grid">
+    <div class="portfolio-item reveal">
+      <div class="p-bg p1"><i class="fas fa-shield-alt p-icon"></i></div>
+      <div class="portfolio-overlay">
+        <div class="p-cat">Brand Identity</div>
+        <div class="p-title">Fortress Brand System</div>
+        <div class="p-view"><i class="fas fa-eye"></i></div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal">
+      <div class="p-bg p2"><i class="fas fa-dragon p-icon"></i></div>
+      <div class="portfolio-overlay">
+        <div class="p-cat">Illustration</div>
+        <div class="p-title">Dragon's Realm Art Series</div>
+        <div class="p-view"><i class="fas fa-eye"></i></div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal">
+      <div class="p-bg p3"><i class="fas fa-film p-icon"></i></div>
+      <div class="portfolio-overlay">
+        <div class="p-cat">Animation</div>
+        <div class="p-title">Neon City Short Film</div>
+        <div class="p-view"><i class="fas fa-eye"></i></div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal">
+      <div class="p-bg p4"><i class="fas fa-gamepad p-icon"></i></div>
+      <div class="portfolio-overlay">
+        <div class="p-cat">Game Development</div>
+        <div class="p-title">EcoWorld Adventure</div>
+        <div class="p-view"><i class="fas fa-eye"></i></div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal">
+      <div class="p-bg p5"><i class="fas fa-mobile-alt p-icon"></i></div>
+      <div class="portfolio-overlay">
+        <div class="p-cat">App Development</div>
+        <div class="p-title">Pulse Fitness App</div>
+        <div class="p-view"><i class="fas fa-eye"></i></div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal">
+      <div class="p-bg p6"><i class="fas fa-magic p-icon"></i></div>
+      <div class="portfolio-overlay">
+        <div class="p-cat">Motion Graphics</div>
+        <div class="p-title">Tech Launch Reel</div>
+        <div class="p-view"><i class="fas fa-eye"></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-label">How We Work</div>
+  <div class="section-title reveal">Our Creative <span>Process</span></div>
+  <div class="process-grid">
+    <div class="process-step reveal">
+      <div class="p-num">01</div>
+      <div class="p-name">Discovery</div>
+      <p class="p-desc">We deeply understand your brand, goals, target audience, and competitive landscape through in-depth strategy consultations.</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="p-num">02</div>
+      <div class="p-name">Strategy</div>
+      <p class="p-desc">We define creative direction, style guides, and a clear roadmap — ensuring every decision aligns with your business objectives.</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="p-num">03</div>
+      <div class="p-name">Creation</div>
+      <p class="p-desc">Our team brings the vision to life with meticulous craftsmanship, iterating and refining until absolute perfection is achieved.</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="p-num">04</div>
+      <div class="p-name">Delivery</div>
+      <p class="p-desc">We deliver polished, production-ready assets on time — with full handoff documentation and ongoing support included.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="section-label">Client Reviews</div>
+  <div class="section-title reveal">What Clients <span>Say</span></div>
+  <div style="overflow:hidden">
+    <div class="testi-track" id="testiTrack">
+      <div class="testi-card">
+        <span class="testi-quote">"</span>
+        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p class="testi-text">Abdul and his team completely transformed our brand. The logo, animations, and design system they delivered were beyond anything we imagined. Truly world-class creative work.</p>
+        <div class="testi-author">
+          <div class="t-avatar">J</div>
+          <div><div class="t-name">James Osei</div><div class="t-role">CEO, TechBridge Africa</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <span class="testi-quote">"</span>
+        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p class="testi-text">The game they built for us exceeded all our KPIs within the first month. Their creative direction combined with technical excellence is rare. Habdul Infinity is our permanent go-to studio.</p>
+        <div class="testi-author">
+          <div class="t-avatar">S</div>
+          <div><div class="t-name">Sofia Mensah</div><div class="t-role">Founder, PlayLab Studios</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <span class="testi-quote">"</span>
+        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p class="testi-text">The animation reel they made for our product launch drove a 300% increase in social engagement. Abdul's storytelling ability and attention to detail are genuinely unmatched.</p>
+        <div class="testi-author">
+          <div class="t-avatar">K</div>
+          <div><div class="t-name">Kwame Asante</div><div class="t-role">Marketing Director, Zuri Corp</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <span class="testi-quote">"</span>
+        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p class="testi-text">Our app UI has received praise from users worldwide. Habdul Infinity understood our vision from day one and delivered something both visually stunning and highly functional.</p>
+        <div class="testi-author">
+          <div class="t-avatar">R</div>
+          <div><div class="t-name">Rania Al-Farsi</div><div class="t-role">CTO, NovaMobile</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="testi-controls">
+    <button class="t-btn" onclick="testiPrev()"><i class="fas fa-arrow-left"></i></button>
+    <button class="t-btn" onclick="testiNext()"><i class="fas fa-arrow-right"></i></button>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-band" id="contact">
+  <div>
+    <div class="cta-big">Ready to Create<br>Something <em>Extraordinary?</em></div>
+    <div class="cta-small">Let's bring your vision to life. Reach out today.</div>
+  </div>
+  <div class="cta-actions">
+    <a href="mailto:rameshanimationstudio01@gmail.com" class="btn-dark"><i class="fas fa-envelope" style="margin-right:8px"></i>Email Us</a>
+    <a href="https://wa.me/212614853129" target="_blank" class="btn-border-dark"><i class="fab fa-whatsapp" style="margin-right:8px"></i>WhatsApp Us</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="f-logo"><span>H</span>Abdul<br><span>I</span>nfinity Agency</div>
+      <p class="f-desc">A creative design studio specializing in graphic design, illustration, animation, game development, and digital solutions — led by Abdul, where infinity meets creativity.</p>
+      <div class="f-social">
+        <a class="soc-btn wa" href="https://wa.me/212614853129" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a class="soc-btn" href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a class="soc-btn" href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a class="soc-btn" href="#" title="Twitter/X"><i class="fab fa-x-twitter"></i></a>
+        <a class="soc-btn" href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a class="soc-btn" href="#" title="Behance"><i class="fab fa-behance"></i></a>
+        <a class="soc-btn" href="#" title="Dribbble"><i class="fab fa-dribbble"></i></a>
+        <a class="soc-btn" href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="f-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#services">Graphic Design</a></li>
+        <li><a href="#services">Illustration</a></li>
+        <li><a href="#services">Animation</a></li>
+        <li><a href="#services">Game Development</a></li>
+        <li><a href="#services">App Development</a></li>
+        <li><a href="#services">Digital Solutions</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Contact Us</h4>
+      <div class="contact-list">
+        <div class="ci">
+          <i class="fas fa-envelope ci-icon"></i>
+          <div class="ci-text"><a href="mailto:rameshanimationstudio01@gmail.com">rameshanimationstudio01<br>@gmail.com</a></div>
+        </div>
+        <div class="ci">
+          <i class="fab fa-whatsapp ci-icon"></i>
+          <div class="ci-text"><a href="https://wa.me/212614853129" target="_blank">+212 614-853-129</a></div>
+        </div>
+        <div class="ci">
+          <i class="fas fa-clock ci-icon"></i>
+          <div class="ci-text">Mon – Fri: 9:00 AM – 6:00 PM</div>
+        </div>
+        <div class="ci">
+          <i class="fas fa-globe ci-icon"></i>
+          <div class="ci-text">Serving Clients Worldwide</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="f-divider">
+  <div class="f-bottom">
+    <p>© 2025 Habdul Infinity Agency. All Rights Reserved.</p>
+    <p>Crafted with ♦ by <a href="#">Habdul Infinity</a></p>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/212614853129" target="_blank" title="Chat on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+// Cursor
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.transform='translate(-50%,-50%) scale(2)';ring.style.opacity='1';});
+  el.addEventListener('mouseleave',()=>{ring.style.transform='translate(-50%,-50%) scale(1)';ring.style.opacity='0.6';});
+});
+
+// Hero carousel
+let cur2=0, auto;
+const slidesEl=document.getElementById('slides');
+const dots=document.querySelectorAll('.dot');
+const curNum=document.getElementById('curNum');
+function goTo(n){cur2=(n+4)%4;slidesEl.style.transform=`translateX(-${cur2*100}%)`;dots.forEach((d,i)=>d.classList.toggle('active',i===cur2));curNum.textContent=String(cur2+1).padStart(2,'0');}
+function nextSlide(){goTo(cur2+1);resetAuto();}
+function prevSlide(){goTo(cur2-1);resetAuto();}
+function resetAuto(){clearInterval(auto);auto=setInterval(()=>goTo(cur2+1),5500);}
+auto=setInterval(()=>goTo(cur2+1),5500);
+
+// Testimonial slider
+let tc=0;
+const tt=document.getElementById('testiTrack');
+function getW(){return tt.children[0].offsetWidth+20;}
+function testiNext(){tc=Math.min(tc+1,tt.children.length-1);tt.style.transform=`translateX(-${tc*getW()}px)`;}
+function testiPrev(){tc=Math.max(tc-1,0);tt.style.transform=`translateX(-${tc*getW()}px)`;}
+
+// Filter
+function filterActive(btn){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+
+// Reveal on scroll
+const revEls=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:0.1});
+revEls.forEach(r=>obs.observe(r));
+
+// Sticky nav shrink
+window.addEventListener('scroll',()=>{document.getElementById('navbar').style.padding=scrollY>60?'11px 6vw':'18px 6vw';});
+
+// Mobile menu
+function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open');}
+function closeMenu(){document.getElementById('mobileMenu').classList.remove('open');}
+</script>
+</body>
+</html>
